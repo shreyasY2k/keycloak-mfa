@@ -1,0 +1,3 @@
+.env
+keycloak_data
+mfa-demo-app/node_modules

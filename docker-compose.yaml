@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/uam_postgresql/data
+    environment:
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    networks:
+      - keycloak
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.5
+    command: start-dev
+    volumes:
+      - ./plugins/netzbegruenung.sms-authenticator-v24.0.10.jar:/opt/keycloak/providers/netzbegruenung.sms-authenticator-v24.0.10.jar
+      - ./plugins/keycloak-2fa-email-authenticator-1.0.0.0-SNAPSHOT.jar:/opt/keycloak/providers/keycloak-2fa-email-authenticator-1.0.0.0-SNAPSHOT.jar
+      - ./plugins/email:/opt/keycloak/themes/base/email
+    environment:
+      KC_HEALTH_ENABLED: true
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      # Admin Configuration
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      # DB Configuration
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/${PG_DB}
+      KC_DB_USERNAME: ${PG_USER}
+      KC_DB_PASSWORD: ${PG_PASSWORD}
+      KC_DB_SCHEMA: public
+    ports:
+      - 8080:8080
+      - 8443:8443
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - keycloak
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  keycloak:
+    driver: bridge
