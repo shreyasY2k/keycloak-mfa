@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import "primereact/resources/themes/lara-light-indigo/theme.css";
-import "primereact/resources/primereact.min.css";
-import '/node_modules/primeflex/primeflex.css'
-import { Button } from 'primereact/button';
-import { Card } from 'primereact/card';
+import { Button, Card, CardContent, Typography, Container, Grid } from '@mui/material';
 import { httpClient } from './HttpClient';
-
 import Keycloak from 'keycloak-js';
 
 /*
@@ -56,67 +51,87 @@ function App() {
 
   return (
     <div className="App">
-      <div className='grid'>
-        <div className='col-12'>
-          <h1>Keycloak Secured App</h1>
-        </div>
-      </div>
-      <div className="grid">
-      </div>
+      <Container>
+        <Grid container spacing={2} alignItems="center" justifyContent="center">
+          <Grid item xs={12}>
+            <Typography variant="h4" component="h1">Keycloak Secured App</Typography>
+          </Grid>
 
-      <div className='grid'>
-        <div className='col-1'></div>
-        <div className='col-2'>
-          <div className="col">
+          <Grid item xs={12} md={2}>
             <Button onClick={() => { setInfoMessage(kc.authenticated ? 'Authenticated: TRUE' : 'Authenticated: FALSE') }}
-              className="m-1 custom-btn-style"
-              label='Is Authenticated' />
+              variant="contained"
+              sx={{ margin: 1 }}
+            >
+              Is Authenticated
+            </Button>
 
             <Button onClick={() => { kc.login() }}
-              className='m-1 custom-btn-style'
-              label='Login'
-              severity="success" />
+              variant="contained"
+              color="success"
+              sx={{ margin: 1 }}
+            >
+              Login
+            </Button>
 
             <Button onClick={() => { setInfoMessage(kc.token) }}
-              className="m-1 custom-btn-style"
-              label='Show Access Token'
-              severity="info" />
+              variant="contained"
+              color="info"
+              sx={{ margin: 1 }}
+            >
+              Show Access Token
+            </Button>
 
             <Button onClick={() => { setInfoMessage(JSON.stringify(kc.tokenParsed)) }}
-              className="m-1 custom-btn-style"
-              label='Show Parsed Access token'
-              severity="warning" />
+              variant="contained"
+              color="warning"
+              sx={{ margin: 1 }}
+            >
+              Show Parsed Access token
+            </Button>
 
             <Button onClick={() => { setInfoMessage(kc.isTokenExpired(5).toString()) }}
-              className="m-1 custom-btn-style"
-              label='Check Token expired'
-              severity="info" />
+              variant="contained"
+              color="info"
+              sx={{ margin: 1 }}
+            >
+              Check Token expired
+            </Button>
 
             <Button onClick={() => { kc.updateToken(10).then((refreshed) => { setInfoMessage('Token Refreshed: ' + refreshed.toString()) }, (e) => { setInfoMessage('Refresh Error') }) }}
-              className="m-1 custom-btn-style"
-              label='Update Token (if about to expire)' />  {/** 10 seconds */}
+              variant="contained"
+              sx={{ margin: 1 }}
+            >
+              Update Token (if about to expire)
+            </Button>
 
             <Button onClick={() => { kc.logout({ redirectUri: 'http://localhost:3000' }) }}
-              className="m-1 custom-btn-style"
-              label='Logout'
-              severity="danger" />
+              variant="contained"
+              color="error"
+              sx={{ margin: 1 }}
+            >
+              Logout
+            </Button>
 
             <Button onClick={() => { setInfoMessage(kc.hasRealmRole('admin').toString()) }}
-              className="m-1 custom-btn-style"
-              label='has realm role "Admin"'
-              severity="info" />
+              variant="contained"
+              color="info"
+              sx={{ margin: 1 }}
+            >
+              has realm role "Admin"
+            </Button>
+          </Grid>
 
-          </div>
-        </div>
-        <div className='col-6'>
-          <Card>
-            <p style={{ wordBreak: 'break-all' }} id='infoPanel'>
-              {infoMessage}
-            </p>
-          </Card>
-        </div>
-        <div className='col-2'></div>
-      </div>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardContent>
+                <Typography variant="body2" component="p" style={{ wordBreak: 'break-all' }} id='infoPanel'>
+                  {infoMessage}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
     </div>
   );
 }
